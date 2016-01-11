@@ -1,0 +1,41 @@
+{% extends 'bioverse/base.html' %}
+{% block content %}
+
+<div id="wrapper" >
+    <!-- Sidebar -->
+    <div id="sidebar-wrapper">
+    <form method="post" style="margin-top:25px;" action="/fetch_sequence_information/">
+      <div class="row">
+        <h4 style="color:black;"><strong>DESIGN WORKSPACE</strong></h4>
+        <label style="margin-top:30px;font-size:12px;color:black;">Add a Gene, Pathway, or Structural Component:</label>
+        <input type="text" name="pdb_code" id="pdb_entry" size="30" style="font-size:14px;margin:0 50px 0 0;" placeholder="PDB code" style="margin-right:15px;">
+        <div class="row" style="margin-left:0;"><p style="font-size:10px;">Currently our search only supports PDB codes</p></div>
+        <button type="submit" id="pdb_submit" style="margin:15px o 0 0;font-size:12px;">Fetch Structure</button>
+      </div>
+    </form> 
+
+<!--
+        <ul class="sidebar-nav" style="padding-top:40px;">
+            <li style="padding-bottom:2px;"><a href="/protein/">Identify Sequences</a>
+            </li>
+            <li style="padding-bottom:2px;"><a href="#">Score Features</a>
+            </li>
+            <li style="padding-bottom:2px;"><a href="#">Select Edits</a>
+            </li>
+            <li style="padding-bottom:2px;"><a href="#">Generate Cassettes</a>
+            </li>
+        </ul>
+-->
+    </div>
+    <!-- Page content -->
+    <div id="page-content-wrapper">
+        {% block content2 %} {% endblock %}
+    </div>
+
+{% endblock %}
+</div>
+
+
+
+          
+

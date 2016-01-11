@@ -1,0 +1,97 @@
+{% extends base.html %}
+
+{%block head%}
+
+<script type="text/javascript">
+
+$('#myTabs a[href="#profile"]').tab('show') // Select tab by name
+$('#myTabs a:first').tab('show') // Select first tab
+$('#myTabs a:last').tab('show') // Select last tab
+$('#myTabs li:eq(2) a').tab('show') // Select third tab (0-indexed)
+
+
+</script>
+
+{%end%}
+
+{% block content %}
+
+<body>
+	
+	<div class="container" align="center">
+		
+		<nav>
+		  <ul class="pager">
+		    <li class="previous"><a href="/sensor_types/"><span aria-hidden="true">&larr;</span> Back to Selection Options</a></li>
+		    <li class="next"><a href="#">Newer <span aria-hidden="true">&rarr;</span></a></li>
+		  </ul>
+		</nav>
+
+		<h4 style="padding:50px 0 50px 0;">Enter your sensor design specifications</h4>
+
+			<div>
+
+			  <!-- Nav tabs -->
+			  <ul class="nav nav-tabs" role="tablist">
+			    <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">General</a></li>
+			    <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Dynamic Range</a></li>
+			    <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">Cellular Localization</a></li>
+			    <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Another</a></li>
+			  </ul>
+
+			  <!-- Tab panes -->
+			  <div class="tab-content">
+			    <div role="tabpanel" class="tab-pane active" id="home">
+			    	<div class="panel panel-default">
+			    		<div class="panel-heading">What general characteristics do you want this sensor to have?</div>
+			    		<div class="panel-body">
+			    			<form>
+			    				<h5 style="margin-bottom:15px;">Design my sensor using...</h5>
+			    				<div class="col-md-3">
+			    					<input type="radio" name="signal_type" value="fluorescence">
+			    					<label>Fluorescent Proteins</label>	
+			    				</div>
+			    				<div class="col-md-3">
+			    					<input type="radio" name="signal_type" value="fluorescence">
+			    					<label>Two-Component Regulators</label>	
+			    				</div>
+			    				<div class="col-md-3">
+			    					<input type="radio" name="signal_type" value="essential">
+			    					<label>Essential Genes</label>
+			    				</div>
+			    				<div class="col-md-3">
+			    					<input type="radio" name="signal_type" value="activator">
+			    					<label>A Transcriptional Activator</label>
+			    				</div>
+			    				<div class="col-md-3">
+			    					<input type="radio" name="signal_type" value="repressor">
+			    					<label>A Transcriptional Repressor</label>
+			    				</div>
+			    			</form>
+			    		</div>
+			    	</div>
+			    </div>
+			    <div role="tabpanel" class="tab-pane" id="profile">
+			    	<div class="panel panel-default">
+			    		<div class="panel-heading">Cellular Localization</div>
+			    		<div class="panel-body">
+			    			<h4>Options</h4>
+			    		</div>
+			    	</div>
+			    </div>
+			    <div role="tabpanel" class="tab-pane" id="messages">
+			    	<label>Dynamic Range</label>
+			    	<input type="text" name="#" value="#" style="">
+			    	<label>Cellular Localization</label>
+			    	<input type="text" name="#" value="#" style="">
+			    </div>
+			    <div role="tabpanel" class="tab-pane" id="settings">Fourth</div>
+			  </div>
+
+			</div>
+
+	</div>
+
+</body>
+
+{%end%}

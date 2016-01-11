@@ -1,0 +1,564 @@
+{% extends 'bioverse/base.html' %}
+
+{% load staticfiles %}
+
+{%block head%}
+<style type="text/css">
+#visible_page_wrapper{
+    position:absolute;
+    top:0px;
+    /*height:100%;*/
+    width:100%;
+    overflow: scroll;
+}
+.JmolDiv { 
+    padding:0.3em 0.5ex; 
+    font-size:0.9em; 
+    background-repeat:no-repeat; 
+    background-position:center;
+    }
+.floatRightDiv { 
+    padding:0.3em 0.5ex; 
+    font-size:0.9em; 
+    float:right;
+    }
+.floatLeftDiv { 
+    padding:0.3em 0.5ex; 
+    font-size:0.9em; 
+    float:left;
+    }
+.update-info{
+    text-align:right;
+    font-size: small;
+    font-style: italic;
+}
+tr.tablesorter > td {
+  padding:2px;
+}
+</style>
+
+<link rel="stylesheet" type="text/css" href="/static/css/feature-viewer-style.css">
+
+<script type="text/javascript">
+
+function ShowHide() {
+
+	document.getElementById('uniprot_entry').style.display = 'none';
+  document.getElementById('uniprot_submit').style.display = 'none';
+	document.getElementById('genbank_entry').style.display = 'none';
+  document.getElementById('genbank_submit').style.display = 'none';
+	document.getElementById('pdb_entry').style.display = 'none';
+  document.getElementById('pdb_submit').style.display = 'none';
+	document.getElementById('advanced_settings').style.display = 'none';
+
+	$("#genbank").click(function () {
+		$("#genbank_entry").show();
+    $("#genbank_submit").show();
+		$("#uniprot_entry").hide();
+    $("#uniprot_submit").hide();
+		$("#pdb_entry").hide();
+    $("#pdb_submit").hide();
+	});
+	$("#uniprot").click(function () {
+		$("#genbank_entry").hide();
+    $("#genbank_submit").hide();
+		$("#uniprot_entry").show();
+    $("#uniprot_submit").show();
+		$("#pdb_entry").hide();
+    $("#pdb_submit").hide();
+	});
+	$("#pdb_code").click(function () {
+		$("#genbank_entry").hide();
+    $("#genbank_submit").hide();
+		$("#uniprot_entry").hide();
+    $("#uniprot_submit").hide();
+		$("#pdb_entry").show();
+    $("#pdb_submit").show();
+	});
+	$("#select_advanced_settings").click(function () {
+		$("#advanced_settings").show();
+	});
+	$("#select_default_settings").click(function () {
+		$("#advanced_settings").hide();
+		$("#pocket").prop('checked', true);
+		$("#active_site").prop('checked', true);
+		$("#surface_residues").prop('checked', true);
+	});	
+
+}
+
+function CheckBoxes() {
+
+	var checkedAtLeastOne = false;
+	$('input[type="checkbox"]').each(function() {
+		if ($(this).is(":checked")) {
+			checkedAtLeastOne = true;
+		}
+	});
+
+	if(checkedAtLeastOne)alert("Thank you");
+	else alert("Please check at least one option")
+}
+
+</script>
+
+  <!-- Below is used locally but not on server. May generate warnings. -->
+  <script type="text/javascript" src="/static/js/jsmol/JSmol.min.js"></script>
+  <script src="/static/js/jsmol/JmolPopIn.js" type="text/javascript"></script>
+  
+  
+  <!-- Below is used on server, but not locally. May generate warnings.-->
+  <script type="text/javascript" src="/static/js/jsmol/JSmol.min.js"></script>
+  
+{% if spt_ref_file != '' %}  
+  <script type="text/javascript">
+  var jmolApplet; //our viewer
+  var jmolInfo; //setup parameters
+  ;(function() {
+
+// Developers: The debugCode flag is checked in j2s/java/core.z.js, 
+// and, if TRUE, skips loading the core methods, forcing those
+// to be read from their individual directories. Set this
+// true if you want to do some code debugging by inserting
+// System.out.println, document.title, or alert commands
+// anywhere in the Java or Jmol code.
+
+var s = document.location.search;
+Jmol.debugCode = (s.indexOf("debugcode") >= 0);
+
+
+jmol_isReady = function(jmolApplet) {
+    //TODO will need to activate widgets
+    Jmol.jmolRadio(jmolApplet,"spacefill 23%; wireframe 0.15;","ball and stick",true);
+ }      
+
+
+jmolInfo = { //default values
+    width: "100%",
+    height: "100%",
+    debug: false,
+    color: "green",
+    addSelectionOptions: false,
+    serverURL: "http://chemapps.stolaf.edu/jmol/jsmol/php/jsmol.php", //you can change this to your own server.
+    use: "HTML5",
+    coverImage: "@APPLETNAME0@.png",        // initial image instead of applet
+    coverScript: "",    // special script for click of cover image (otherwise equal to script)
+    deferApplet: false,                  // wait to load applet until click
+    deferUncover: false,                 // wait to uncover applet until script completed
+    //The paths below assume your server is set up with standard JSmol directory.  If not
+    //they will need modification for the page to work.
+    jarPath: "/static/js/jsmol/java", //path to applet .jar files on server.
+    j2sPath: "/static/js/jsmol/j2s",//path to javascript version.
+    makeLiveImg:"/static/js/jsmol/j2s/img/play_make_live.jpg",//path to activate 3-D image.
+    jarFile: "/static/js/jsmol/java/JmolAppletSigned0.jar",
+    isSigned: true,
+    //disableJ2SLoadMonitor: true,
+    disableInitialConsole: true,
+    readyFunction: jmol_isReady,
+    script: ""
+}
+
+// ?_USE=JAVA   ?_USE=SIGNED   ?_USE=HTML5
+   if (s.indexOf("USE=") >= 0)
+     jmolInfo.use = s.split("USE=")[1].split("&")[0]
+   else if (s.indexOf("JAVA") >= 0)
+     jmolInfo.use = "JAVA"
+   else if (s.indexOf("IMAGE") >= 0)
+     jmolInfo.use = "IMAGE"
+   else if (s.indexOf("NOWEBGL") >= 0)
+     jmolInfo.use = "JAVA IMAGE"
+   else if (s.indexOf("WEBGL") >= 0)
+     jmolInfo.use = "WEBGL HTML5"
+   if (s.indexOf("NOWEBGL") >= 0)
+     jmolInfo.use = use.replace(/WEBGL/,"")
+   var useSignedApplet = (s.indexOf("SIGNED") >= 0);
+   if(useSignedApplet && jmolInfo.use == "HTML5") jmolInfo.use = "JAVA";
+
+   var protocol = window.location.protocol.toLowerCase();
+   if (protocol == "file:") { 
+    jmolInfo.jarPath = "/static/js/jsmol/java";
+    jmolInfo.j2sPath = "/static/js/jsmol/j2s";
+    jmolInfo.makeLiveImg = "/static/js/jsmol/j2s/img/play_make_live.jpg";
+    jmolInfo.jarFile = "JmolAppletSigned.jar";
+    jmolInfo.isSigned= "true";
+  }
+})();
+
+Jmol.setDocument(document);
+
+// notice that we are using no document.write() function here. All DOM-based.
+// Jmol.getAppletHtml is working.
+
+$(document).ready(function(){//set up each of the applet locations
+    $("#make_live_icon").attr('src',jmolInfo.makeLiveImg);
+   var jmolInfo0=jmolInfo;
+   jmolInfo0.script="load {% static 'results/' %}{{ spt_ref_file }}; select all; cartoon only; color relativeTemperature; select hetero; spacefill 23%; wireframe 0.15; color cyan;";
+   $("#Jmol0").html(Jmol.getAppletHtml("jmolApplet0",jmolInfo0));
+   var r = [
+       {% if target_residue_files != None %}
+       {% if target_residue_files.lpocket %}
+       ["load {{ target_residue_files.lpocket }}; select all; cartoon only; color cartoon relativeTemperature; select hetero; spacefill 23%; wireframe 0.15; color cyan;", "Ligand Binding Pocket" ],
+       {% endif %}
+       {% if target_residue_files.SurfRes %}
+       ["load {{ target_residue_files.SurfRes }}; select all; cartoon only; color cartoon relativeTemperature; select hetero; spacefill 23%; wireframe 0.15; color cyan;", "Surface Residues ( >30% SASA )" ],
+       {% endif %}
+       {% endif %}
+       ["select all; color cartoon relativeTemperature; color relativeTemperature; select hetero; spacefill 23%; wireframe 0.15; color cyan;", "Color by Crystallographic B-factor"],
+       ["spin on; {% for key, value in recorded_info.items %} select :{{ value.CHAIN }}; color {{ value.COLOR }}; color cartoon {{ value.COLOR }}; {% endfor %} select ligand; spacefill 23%; wireframe 0.15; color cyan; ","Color Each Chain in Monomeric Unit"],
+       ["spin on; select all; spacefill on; color relativeTemperature; select ligand; spacefill 23%; wireframe 0.15; color cyan; select nucleic; color grey;","Spacefill ON"],
+       ["spin on; select all; spacefill off; color relativeTemperature; select hetero; spacefill 23%; wireframe 0.15; color cyan; select nucleic; color grey;", "Spacefill OFF"]
+    ];
+   $("#Jmol0_radio").html(Jmol.jmolRadioGroup(jmolApplet0, r, "<br>", "atomstyle"));
+   //$("#Jmol0_radio").html(Jmol.jmolRadio("jmolApplet0", "spacefill 23%; wireframe 0.15;", "ball and stick", true));
+   //Jmol.script = function(jmolApplet0, myScript);
+   //Jmol.script(jmolApplet0, "spacefill on; cartoon off;");
+});
+  </script>
+  {% endif %}  
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.4.0/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.4.0/mode/javascript/javascript.min.js"></script>
+<script src="/static/js/feature-viewer.bundle.js"></script>
+
+<script>
+var initSVG;
+var addFeatures;
+
+var executeCode = function (outputDiv, mirrorCode) {
+    var code = mirrorCode.getValue();
+    $(outputDiv).html("");
+    eval(code);
+    $(outputDiv).animate({opacity: "100"}, 2000);
+};
+
+{% if title != '' %}
+window.onload = function () {
+    {% for key, value in recorded_info.items %}
+
+    var ft = new FeatureViewer("{{ value.SEQUENCE }}","#seq_div-{{i}}", {
+        showAxis: true,
+        showSequence: false,
+        brushActive: true,
+          toolbar:false,
+          zoomMax:50
+                  });
+
+        ft.addFeature({
+          data: [{x:6, y:8, description:"KW"}, {x:16, y:17, description:"F"}, {x:18, y:20}, {x:22, y:28}, {x:51, y:52}, {x:56, y:60}, {x:77, y:84}, {x:85, y:86}, {x:87, y:88}, {x:95, y:97}, {x:112, y:115}, {x:129, y:130}],
+          name: "pocket",
+          className: "pocket",
+          color: "red",
+          type: "rect"
+        });
+    {% endfor %}
+
+    var ft2 = new FeatureViewer("FDSJKLFJDSFKLJDFHADJKLFHDSJKLFHDAFJKLDHFJKLDASFHDJKLFHDSAJKLFHDAKLFJDHSAFKLDLSNCDJ"+
+          "KLFENFIUPERWDJKPCNVDFPIEHFDCFJDKOWFPDJWFKLXSJFDW9FIPUAENDCXAMSFNDUAFIDJFDLKSAFJDSAKFLJDSADJFDW9FIPUAENDCXAMSFNDAAAAAAAAAAAFJDSAKFL","#div2", {
+          showAxis: true,
+          showSequence: true,
+          brushActive: true,
+            toolbar:true,
+            zoomMax:50
+                    });
+
+        ft2.addFeature({
+            data: [{x:20,y:32},{x:46,y:100},{x:123,y:167}],
+            name: "test feature 1",
+            className: "test1",
+            color: "#0F8292",
+            type: "rect"
+        });
+        ft2.addFeature({
+            data: [{x:52,y:52},{x:92,y:92}],
+            name: "test feature 2",
+            className: "test2",
+            color: "#007800",
+            type: "unique"
+        });
+        ft2.addFeature({
+            data: [{x:130,y:184},{x:40,y:142},{x:80,y:110}],
+            name: "test feature 3",
+            className: "test3",
+            color: "#CFB915",
+            type: "path"
+        });
+        ft2.addFeature({
+            data: [{x:120,y:154},{x:22,y:163},{x:90,y:108},{x:10,y:25},{x:193,y:210},{x:78,y:85},{x:96,y:143},{x:14,y:65},{x:56,y:167}],
+            name: "test feature 4",
+            className: "test4",
+            color: "#C50063",
+            type: "multipleRect"
+        });
+        ft2.addFeature({
+            data: [{x:120,y:154,description:"aaaaa",id:"a1"},{x:22,y:163,description:"bbbbb",id:"b1"},
+                   {x:90,y:108,description:"ccccc",id:"c1"},{x:10,y:25,description:"ddddd",id:"d1"},
+                   {x:193,y:210,description:"eeeee",id:"e1"},{x:78,y:85,description:"fffff",id:"f1"},
+                   {x:96,y:143,description:"ggggg",id:"g1"},{x:14,y:65,description:"hhhhh",id:"h1"},
+                   {x:56,y:167,description:"jjjjj",id:"j1"}],
+            name: "test feature 5",
+            className: "test5",
+            color: "#920049",
+            type: "multipleRect"
+        });
+
+
+    initSVG = CodeMirror.fromTextArea(ft, {
+        mode: "javascript",
+        lineNumbers: true,
+        lineWrapping: true
+    });
+    addFeatures = CodeMirror.fromTextArea(ft2, {
+        mode: "javascript",
+        lineNumbers: true,
+        lineWrapping: true
+    });
+    $(function () {
+        executeCode("#div1", initSVG);
+        executeCode("#div2", addFeatures);
+    });
+};
+{% endif %}
+</script>
+
+<!-- Demo styling -->
+<link href="/static/tablesorter/docs/css/jq.css" rel="stylesheet">
+
+<!-- jQuery: required (tablesorter works with jQuery 1.2.3+) -->
+<script src="/static/tablesorter/docs/js/jquery-1.2.6.min.js"></script>
+
+<!-- Pick a theme, load the plugin & initialize plugin -->
+<link href="/static/tablesorter/css/theme.metro-dark.css" rel="stylesheet">
+<script src="/static/tablesorter/dist/js/jquery.tablesorter.js"></script>
+<script src="/static/tablesorter/dist/js/jquery.tablesorter.widgets.js"></script>
+
+<script type="text/javascript">
+  $(function(){
+    $('table').tablesorter({
+      theme     : 'default',
+      widgets     : ['zebra', 'columns'],
+      usNumberFormat  : false,
+      sortReset   : true,
+      sortRestart   : true,
+      textExtraction: {
+      1: function(node, table, cellIndex){ return $(node).find("span").text(); },
+      2: function(node, table, cellIndex){ return $(node).find("span").text(); },
+      3: function(node, table, cellIndex){ return $(node).find("span").text(); },
+      4: function(node, table, cellIndex){ return $(node).find("span").text(); },
+      5: function(node, table, cellIndex){ return $(node).find("span").text(); },
+      6: function(node, table, cellIndex){ return $(node).find("span").text(); }
+      }
+    });
+  });
+</script>
+
+<script type="text/javascript">
+  $(function() {
+    $( "#accordion" ).accordion();
+    $('.collapse').collapse();
+  });
+</script>
+
+{% endblock %}
+
+
+
+{% block content %}
+<div class="row">
+
+<div>
+  <h4><strong>Design Mutational Libraries</strong></h4>
+</div>
+<form method="post" action="/bioverse/protein/">
+  {% csrf_token %}
+  {{ form }}
+  <div onload="ShowHide();">
+    <div class="row" style="margin-left:0;">
+        <input class="col-xsm-4 col-4" type="text" name="pdb_code" id="pdb_code" value="{{ pdb_code }}" size="50" style="font-size:14px;margin:0 50px 0 0;margin-right:15px;" placeholder="Currently Support: gene name or PDB code">
+        <button class="col-xsm-4 col-4" type="submit" value="OK" id="pdb_submit" style="margin:15px o 0 0;font-size:12px;">Query <i class="fa fa-search"></i></button>
+    </div>
+    <p style="font-size:10px;">Query: sequence, gene name, pathway, PDB, UniProt</p>
+    
+    <div class="row" style="margin-left:0;"></div>
+  </div>
+</form> 
+
+{% if pdb_map != None %}
+<h4><strong>Select a structure that best matches your target protein or <a href="#">Refine Search</a></strong></h4>
+<div class="row">
+  <table class="tablesorter-metro-dark">
+    <thead>
+      <tr class="tablesorter">
+        <th>select</th>
+        <th>Rank</th>
+        <th>Macromolecule Name</th>
+        <th>Organism</th>
+        <th>PDB ID</th>
+        <th>resolution ()</th>
+        <th>UniProt ID</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for key, value in pdb_map.items %}
+      <tr class="tablesorter">
+        <td><input type="checkbox"></td>
+        <td><span>{{ value.rank }}</span></td>
+        <td><span>{{ value.macromolecule_name }}</span></td>
+        <td><span><em>{{ value.organism }}</em></span></td>
+        <td><span>{{ key }}</span></td>
+        <td><span>{{ value.resolution }}</span></td>
+        <td><span>{{ value.uniprot_id }}</span></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+{% if title != '' %}
+<form method="post" action="/pick_target_resiudes/{{ code }}">
+    <div class="panel-group" id="accordian" role="tablist" aria-multiselectable="true">
+      <div class="panel panel-default">
+
+        <div class="panel-heading" role="tab" id="headingOne">
+        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne"><div class="row"><h4><strong>Step 1: Specify Method for Picking Target Sites</strong></h4></div></a></div>
+
+          <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+            <div class="panel-body">
+
+            <form>
+            <div class="row" style="margin:0 0 0 0">
+              <h5>PDB code: {{ code }}</h5>
+            </div>
+            {% if sequence_annotations|length != 0 %}
+            {% for key, value in recorded_info.items %}
+            <div class="row" style="margin:0 0 10px 0;">
+              <div class="col-md-3"><strong>{% for name in value.GENE %}{{ name }}{% endfor %}</strong> <button type="submit" style="font-size:10px;margin-left:5px;" id="save_to_workspace">Add to Workspace</button></div>
+              <div class="col-md-5">{% for product in value.PRODUCT %}{{ product }}{% endfor %}</div>
+              <div class="col-md-4" style="text-align:right;">Complete Saturation Library Size: {{ value.LIBRARY_SIZE }}</div>
+            </div>
+            {% endfor %}
+            {% endif %}
+            </form>
+
+              <div class="row" style="margin:20px 0 0 0;" id="rational_design">
+                <div><h5>Perform Targeted Survey:</h5></div>
+                <div class="col-md-2">
+                <input style="margin-right:5px" type="checkbox" name="pocket" id="pocket"><label>Pockets</label>
+                </div>
+                <div class="col-md-4">
+                <input style="margin-right:5px" type="checkbox" name="active_site" id="active_site"><label>Ligand-Binding Pockets</label>
+                </div>
+                <div class="col-md-3">
+                <input style="margin-right:5px" type="checkbox" name="surface_residues" id="surface_residues"><label>Surface Residues</label>
+                </div>
+                <div class="col-md-3">
+
+                <button style="margin-right:5px" type="submit" id="target_getter_submit">Pick Target Residues</button>
+                </div>
+              </div>
+                <div class="row" style="margin-top:30px;">
+                  <div class="col-md-5" id="structure" >
+                    <table style="text-align: left; width: 300px;" border='1' cellpadding='2' cellspacing='2'>
+                        <tr><td id="leftJmolCntl0" style="visibility:hidden;width:0;"></td>
+                          <td style="vertical-align: top; width: 300px; height: 300px;">
+                            <div id="Jmol0" class="JmolDiv" style="width: 300px; height: 300px;">
+                               Jmol0 will appear here.
+                            </div>
+                          </td><td id="rightJmolCntl0" style="width:0;"></td>
+                        </tr>
+                        <tr><td></td>
+                          <td >     
+                            <div id="Jmol0_radio" style="font-size:12px;"></div>      
+                          </td><td></td>
+                        </tr>
+                    </table>
+                    <div style="text-align:right;"><a data-toggle="collapse" href="#collapseStructuralInfo" aria-expanded="false" aria-controls="collapseStructuralInfo">Show Structural Details</a></div> 
+                  </div>
+                  {% for key, value in recorded_info.items %}
+                  <div id="seq_div-{{i}}" class="col-md-7" style="vertical-align:top;">
+                    <h5><div class="col-sm-5">{% for name in value.GENE %}{{ name }} (chain {{ value.CHAIN }}){% endfor %}</div></h5>
+                  </div>
+                  {% endfor %}
+                </div>
+                <div class="row" style="margin-top:20px">
+                  <div class="collapse" id="collapseStructuralInfo">
+                    <div class="well">
+                      <div class="row">
+                        <div class="col-md-4">Organism:</div>
+                        <div class="col-md-8">{{ organisms.0 }}</div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-4">Gene:</div>
+                        <div class="col-md-8">
+                          {% for key, value in recorded_info.items %}
+                          <div class="row" style="margin:0px;">
+                            <div class="col-md-1">{% for name in value.GENE %}{{ name }}{% endfor %}</div>
+                            <div class="col-md-10">{% for product in value.PRODUCT %}{{ product }} {% endfor %}</div>
+                          </div>
+                          {% endfor %}
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-4">Experiment:</div>
+                        <div class="col-md-8">{{ experiment }}</div>
+                      </div>
+                      {% if experiment == 'X-RAY DIFFRACTION' or experiment == 'X-RAY DIFFRACTION; NEUTRON DIFFRACTION' %}
+                      <div class="row">
+                        <div class="col-md-4">Resolution:</div>
+                        <div class="col-md-8">{{ resolution }} Å</div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-4">Molecules in the asymmetric unit:</div>
+                        <div class="col-md-8">{{ number_of_structures }}</div>
+                      </div>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+      </div>
+    </div> 
+
+<div class="row" style="margin-top: 30px;border-bottom:1px solid #E7EAEC;display:none;">
+    <div id="div2" class="col-md-5 col-xs-10 col-xs-offset-1"
+         style="height:250px;vertical-align:top;margin-top:15px;">
+    </div>
+</div>
+
+</form>
+
+<div class="row">
+<form>
+  <div class="panel-group" id="accordian" role="tablist" aria-multiselectable="true">
+    <div class="panel panel-default">
+      <div class="panel-heading" role="tab" id="headingTwo"><a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo"><div class="row"><h4><strong>Step 2: Review Library Statistics</strong></h4></div></a></div>
+      <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+      <div class="panel-body">Circle plots, pie charts, tables</div>
+      </div>
+    </div>
+  </div>
+</form>
+</div>
+
+<div class="row">
+<form>
+  <div class="panel-group" id="accordian" role="tablist" aria-multiselectable="true">
+    <div class="panel panel-default">
+      <div class="panel-heading" role="tab" id="headingThree"><a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="true" aria-controls="collapseThree"><div class="row"><h4><strong>Step 3: Generate Editing Cassettes</strong></h4></div></a></div>
+      <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+      <div class="panel-body">Order form</div>
+      </div>
+    </div>
+  </div>
+</form>
+</div>
+
+{% endif %}
+
+
+{% endblock %}
+</div>
+
+

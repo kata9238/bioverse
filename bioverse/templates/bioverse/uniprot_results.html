@@ -1,0 +1,283 @@
+{% extends base.html %}
+{%block head%}
+<style type="text/css">
+    #visible_page_wrapper{
+        position:absolute;
+        top:0px;
+        /*height:100%;*/
+        width:100%;
+        overflow: scroll;
+    }
+    .JmolDiv { 
+        padding:0.3em 0.5ex; 
+        font-size:0.9em; 
+        background-repeat:no-repeat; 
+        background-position:center;
+        }
+    .floatRightDiv { 
+        padding:0.3em 0.5ex; 
+        font-size:0.9em; 
+        float:right;
+        }
+    .floatLeftDiv { 
+        padding:0.3em 0.5ex; 
+        font-size:0.9em; 
+        float:left;
+        }
+    .update-info{
+        text-align:right;
+        font-size: small;
+        font-style: italic;
+    }
+</style>
+<script type="text/javascript">
+
+var pymol = new PyMOL('localhost', 8085, 'on'); // create PyMOL object with buffering enabled
+
+var cmd = pymol.cmd; // assign a global symbol for the PyMOL cmd API
+
+function demoLoop() {
+
+    cmd.reinitialize();
+    cmd.load("/Users/andrea/Desktop/test/static/img/4PDJ.pdb");
+    cmd.spectrum("b");
+    cmd.show("surface");
+    count = pymol.flush();
+
+}
+
+</script>
+
+<script type="text/javascript">
+
+</script>
+
+<script type="text/javascript">
+
+function ShowHide() {
+
+	document.getElementById('uniprot_entry').style.display = 'none';
+	document.getElementById('genbank_entry').style.display = 'none';
+	document.getElementById('pdb_entry').style.display = 'none';
+	document.getElementById('advanced_settings').style.display = 'none';
+
+	$("#genbank").click(function () {
+		$("#genbank_entry").show();
+		$("#uniprot_entry").hide();
+		$("#pdb_entry").hide();
+	});
+	$("#uniprot").click(function () {
+		$("#genbank_entry").hide();
+		$("#uniprot_entry").show();
+		$("#pdb_entry").hide();
+	});
+	$("#pdb_code").click(function () {
+		$("#genbank_entry").hide();
+		$("#uniprot_entry").hide();
+		$("#pdb_entry").show();
+	});
+	$("#select_advanced_settings").click(function () {
+		$("#advanced_settings").show();
+	});
+	$("#select_default_settings").click(function () {
+		$("#advanced_settings").hide();
+		$("#pocket").prop('checked', true);
+		$("#active_site").prop('checked', true);
+		$("#surface_residues").prop('checked', true);
+	});	
+
+}
+
+function CheckBoxes() {
+
+	var checkedAtLeastOne = false;
+	$('input[type="checkbox"]').each(function() {
+		if ($(this).is(":checked")) {
+			checkedAtLeastOne = true;
+		}
+	});
+
+	if(checkedAtLeastOne)alert("Thank you");
+	else alert("Please check at least one option")
+}
+
+</script>
+
+  <!-- Below is used locally but not on server. May generate warnings. -->
+  <script type="text/javascript" src="/static/js/jsmol/JSmol.min.js"></script>
+  <script src="/static/js/jsmol/JmolPopIn.js" type="text/javascript"></script>
+  
+  
+  <!-- Below is used on server, but not locally. May generate warnings.-->
+  <script type="text/javascript" src="/static/js/jsmol/JSmol.min.js"></script>
+  <script type="text/javascript">
+  var jmolApplet; //our viewer
+  var jmolInfo; //setup parameters
+  ;(function() {
+
+// Developers: The debugCode flag is checked in j2s/java/core.z.js, 
+// and, if TRUE, skips loading the core methods, forcing those
+// to be read from their individual directories. Set this
+// true if you want to do some code debugging by inserting
+// System.out.println, document.title, or alert commands
+// anywhere in the Java or Jmol code.
+
+var s = document.location.search;
+Jmol.debugCode = (s.indexOf("debugcode") >= 0);
+
+
+jmol_isReady = function(jmolApplet) {
+    //TODO will need to activate widgets
+ }      
+
+
+jmolInfo = { //default values
+    width: "100%",
+    height: "100%",
+    debug: false,
+    color: "green",
+    addSelectionOptions: false,
+    serverURL: "http://chemapps.stolaf.edu/jmol/jsmol/php/jsmol.php", //you can change this to your own server.
+    use: "HTML5",
+    coverImage: "@APPLETNAME0@.png",        // initial image instead of applet
+    coverScript: "",    // special script for click of cover image (otherwise equal to script)
+    deferApplet: false,                  // wait to load applet until click
+    deferUncover: false,                 // wait to uncover applet until script completed
+    //The paths below assume your server is set up with standard JSmol directory.  If not
+    //they will need modification for the page to work.
+    jarPath: "/static/js/jsmol/java", //path to applet .jar files on server.
+    j2sPath: "/static/js/jsmol/j2s",//path to javascript version.
+    makeLiveImg:"/static/js/jsmol/j2s/img/play_make_live.jpg",//path to activate 3-D image.
+    jarFile: "/static/js/jsmol/java/JmolAppletSigned0.jar",
+    isSigned: true,
+    //disableJ2SLoadMonitor: true,
+    disableInitialConsole: true,
+    readyFunction: jmol_isReady,
+    script: ""
+}
+
+// ?_USE=JAVA   ?_USE=SIGNED   ?_USE=HTML5
+   if (s.indexOf("USE=") >= 0)
+     jmolInfo.use = s.split("USE=")[1].split("&")[0]
+   else if (s.indexOf("JAVA") >= 0)
+     jmolInfo.use = "JAVA"
+   else if (s.indexOf("IMAGE") >= 0)
+     jmolInfo.use = "IMAGE"
+   else if (s.indexOf("NOWEBGL") >= 0)
+     jmolInfo.use = "JAVA IMAGE"
+   else if (s.indexOf("WEBGL") >= 0)
+     jmolInfo.use = "WEBGL HTML5"
+   if (s.indexOf("NOWEBGL") >= 0)
+     jmolInfo.use = use.replace(/WEBGL/,"")
+   var useSignedApplet = (s.indexOf("SIGNED") >= 0);
+   if(useSignedApplet && jmolInfo.use == "HTML5") jmolInfo.use = "JAVA";
+
+   var protocol = window.location.protocol.toLowerCase();
+   if (protocol == "file:") { 
+    jmolInfo.jarPath = "/static/js/jsmol/java";
+    jmolInfo.j2sPath = "/static/js/jsmol/j2s";
+    jmolInfo.makeLiveImg = "/static/js/jsmol/j2s/img/play_make_live.jpg";
+    jmolInfo.jarFile = "JmolAppletSigned.jar";
+    jmolInfo.isSigned= "true";
+  }
+})();
+
+Jmol.setDocument(document);
+
+// notice that we are using no document.write() function here. All DOM-based.
+// Jmol.getAppletHtml is working.
+
+$(document).ready(function(){//set up each of the applet locations
+    $("#make_live_icon").attr('src',jmolInfo.makeLiveImg);
+   var jmolInfo0=jmolInfo;
+   jmolInfo0.coverImage="/static/img/test.png";
+   jmolInfo0.script="load /static/img/test.spt";
+   $("#Jmol0").html(Jmol.getAppletHtml("jmolApplet0",jmolInfo0));
+});
+  </script>
+
+{%end%}
+
+{% block content %}
+
+<body onload="ShowHide();">
+
+<div class="container" align="center">
+  <div class="row">
+      <form method="post" action="/fetch_sequence_information/">
+        <div class="row">
+          <div class="col-md-3">
+            <p>Enter a sequence identifier: </p>
+          </div>
+          <div class="col-md-3">
+            <input type="radio" name="accession" id="uniprot" required>
+            <label>UniProt ID</label>
+            <input type="text" name="uniprot" id="uniprot_entry">
+          </div>
+          <div class="col-md-3">
+            <input type="radio" name="accession" id="genbank">
+            <label>Genbank Accession Number</label>
+            <input type="text" name="genbank" id="genbank_entry">
+          </div>
+          <div class="col-md-3">
+            <input type="radio" name="accession" id="pdb_code">
+            <label>PDB code</label>
+            <input type="text" name="pdb_code" id="pdb_entry">
+          </div>
+        </div>
+        <button type="submit" style="margin-top:15px;">Fetch Sequence Information</button>
+      </form>
+
+      <form id="rational_design" style="display:none;">
+        <div class="row">
+          <input type="radio" name="settings" id="select_default_settings" checked>
+          <label>Use Default Settings</label>
+          <input type="radio" name="settings" id="select_advanced_settings">
+          <label>Show Advanced Settings</label>
+        </div>
+        <div class="row" id="advanced_settings">
+          <div class="row">
+            <input type="checkbox" name="pocket" id="pocket" checked>
+            <label>Find Pockets</label>
+          </div>
+          <div class="row">
+            <input type="checkbox" name="active_site" id="active_site" checked>
+            <label>Find Ligand-Binding Pockets</label>
+          </div>
+          <div class="row">
+            <input type="checkbox" name="surface_residues" id="surface_residues" checked>
+            <label>Find Surface Residues</label>
+          </div>
+        </div>
+        <button type="submit" onClick="CheckBoxes()">Fetch Sequences</button>
+      </form>
+  </div>
+
+  <div class="col-md-6" id="information">
+    <p style="margin-top:30px;">Information</p>
+  </div>
+  <div class="col-md-6" id="surface_res" >
+    <div class="divtest">
+    <table style="text-align: left; width: 300px;" border='1' cellpadding='2' cellspacing='2'>
+        <tr><td id="leftJmolCntl0" style="visibility:hidden;width:0;"></td>
+          <td style="vertical-align: top; width: 300px; height: 300px;">
+            <div id="Jmol0" class="JmolDiv" style="width: 300px; height: 300px; background-image:URL(/static/img/test.png)">
+               Jmol0 will appear here.
+            </div>
+          </td><td id="rightJmolCntl0" style="width:0;"></td>
+        </tr>
+        <tr><td></td>
+          <td style="vertical-align: top;">     
+            CLICK IMAGE TO ACTIVATE 3D <br/> Insert a caption for test here.        
+          </td><td></td>
+        </tr>
+    </table>
+    </div>
+    <a href="javascript:Jmol.script(jmolApplet0, 'color relativeTemperature">color b_factor</a>
+    <a style="margin-top:30px;" href="javascript:void(0)" onClick="demoLoop()">Run this program</a>    
+  </div>
+</div>
+
+</body>
+
+{%end%}

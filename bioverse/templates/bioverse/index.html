@@ -1,0 +1,106 @@
+{% extends 'bioverse/base.html' %}
+
+{% load staticfiles %}
+
+{% block head %}
+
+<style type="text/css">
+.carousel .item {
+  background-color: #E0E0E0;
+}
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+    <!-- Carousel
+    ================================================== -->
+    <div id="myCarousel" class="carousel slide" data-ride="carousel">
+      <!-- Indicators -->
+      <ol class="carousel-indicators">
+        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+        <li data-target="#myCarousel" data-slide-to="1"></li>
+        <li data-target="#myCarousel" data-slide-to="2"></li>
+      </ol>
+      <div class="carousel-inner" role="listbox">
+        <div class="item active">
+            <div class="carousel-caption">
+            <img align="center" width="800px" style="margin-bottom:25px;" src="/static/img/create_figure1.png">
+                <p><a class="btn btn-lg btn-primary" href="#" role="button">Learn more</a></p>
+            </div>
+        </div>
+        <div class="item">
+            <div class="carousel-caption">
+              <img align="center" width="700px" style="margin-bottom:25px;" src="/static/img/dbtl.png">
+              <p><a class="btn btn-lg btn-primary" href="#" role="button">Learn more</a></p>
+            </div>
+        </div>
+        <div class="item">
+            <div class="carousel-caption">
+              <h1>One more for good measure.</h1>
+              <p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+              <p><a class="btn btn-lg btn-primary" href="#" role="button">Browse gallery</a></p>
+            </div>
+          </div>
+      </div>
+      <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+      </a>
+      <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+      </a>
+    </div><!-- /.carousel -->
+
+<div class="container" align="center">
+    <div class="row">
+        <p>Powered By:</p>
+        <table>
+            <tr>
+                <td>
+                    <a href="https://www.rosettacommons.org/"><img style="width:200px;" src="/static/img/rosetta.png"></a>
+                </td>
+                <td>
+                    <a href="http://prody.csb.pitt.edu/"><img style="width:200px;" src="/static/img/prody.png"></a>
+                </td>
+                <td>
+                    <a href="http://biopython.org/wiki/Biopython"><img style="width:200px;" src="/static/img/biopython.png"></a>
+                </td>
+                <td>
+                    <a href="http://www.rcsb.org/pdb/home/home.do"><img style="height:70px;" src="/static/img/rcsb_logo.png"></a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a href="http://pfam.xfam.org/"><img src="static/img/pfam.png"></a>
+                </td>
+                <td>
+                    <a href="http://blast.ncbi.nlm.nih.gov/Blast.cgi"><img style="height:70px;" src="/static/img/ncbi_blast.png"></a>
+                </td>
+                <td>
+                    <a href="http://hmmer.janelia.org/"><img style="height:70px;" src="/static/img/hmmer_title.png">HMMER</a>
+                </td>
+                <td>
+                    <a href="http://mathbio.nimr.mrc.ac.uk/wiki/POPS"><img style="height:70px;" src="/static/img/pops.png"></a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a href="http://www.uniprot.org/"><img src="/static/img/uniprot.png"></a>
+                </td>
+                <td>
+                    <a href="http://prodata.swmed.edu/promals3d/promals3d.php">PROMALS3D</a>
+                </td>
+                <td>
+                    <a href="http://zhanglab.ccmb.med.umich.edu/I-TASSER/"><img style="width:200px;" src="/static/img/itasser.png"></a>
+                </td>
+            </tr>
+            <tr>
+            </tr>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

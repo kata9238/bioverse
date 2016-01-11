@@ -1,0 +1,139 @@
+
+<html lang="en">
+
+    <head>
+        <title>bioverse</title>
+        <link rel="icon" href="/static/img/favicon.ico?" type="image/x-icon">
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+        <!-- Optional theme -->
+        <link href="/static/css/carousel.css" rel="stylesheet">
+        <link rel="stylesheet" href="/static/css/bootstrap-theme.min.css">
+        <link href="/static/css/bootstrap.css" rel="stylesheet">
+        <link href="/static/css/main.css" rel="stylesheet">
+        <link rel="stylesheet" href="/static/css/jquery-ui.css">
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="/static/css/font-awesome.min.css">
+        <!-- Ionicons -->
+        <link rel="stylesheet" href="/static/css/ionicons.min.css">
+        <link rel="stylesheet" type="text/css" href="/static/css/AdminLTE.css">
+        <link rel="stylesheet" type="text/css" href="/static/css/skins/skin-purple.css">
+
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <script src="/static/js/jquery-1.11.0.min.js"></script>
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="/static/js/bootstrap.min.js"></script>
+        <script src="/static/js/jquery.js"></script>
+        <script src="/static/js/jquery-ui.js"></script>
+        <script src="/static/js/json2.js"></script> 
+        <script src="/static/js/pymol.js"></script>
+
+        <!-- REQUIRED JS SCRIPTS -->
+
+        <!-- jQuery 2.1.4 -->
+        <script src="/static/js/jQuery-2.1.4.min.js"></script>        
+
+        {% block head %}  {% endblock %}
+    </head>
+
+    <body class="hold-transition skin-purple sidebar-mini sidebar-expand">
+      <div class="wrapper">
+
+          <!-- Main Header -->
+          <header class="main-header">
+
+            <!-- Logo -->
+            <a href="/bioverse/" class="logo">
+              <!-- mini logo for sidebar mini 50x50 pixels -->
+              <span class="logo-mini"><b style="color:#5C755E;">B</b><span style="color:#2e0a05;">io</span></span>
+              <!-- logo for regular state and mobile devices -->
+              <span class="logo-lg"><b style="color:#5C755E;">Bio</b><span style="color:#2e0a05;">verse</span></span>
+            </a>
+
+            <!-- Header Navbar -->
+            <nav class="navbar navbar-static-top" role="navigation">
+              <!-- Sidebar toggle button-->
+              <a id="bioverse-menu-bars-reverse" href="#" class="sidebar-toggle_bioverse" data-toggle="offcanvas" role="button">
+                <i style="margin-top:20px;color:#2e0a05;" class="fa fa-bars fa-lg"></i><span class="sr-only">Toggle navigation</span>
+              </a>
+            </nav>
+          </header>
+
+          <!-- Left side column. contains the logo and sidebar -->
+          <aside class="main-sidebar">
+
+            <!-- sidebar: style can be found in sidebar.less -->
+            <section class="sidebar">
+
+              <!-- search form (Optional) -->
+              <form action="/fetch_sequence_information/" method="post" class="sidebar-form">
+                <div class="input-group">
+                  <input type="text" name="q" class="form-control" placeholder="Search...">
+                  <span class="input-group-btn">
+                    <button type="submit" name="search" id="pdb_submit" class="btn btn-flat"><i class="fa fa-search"></i></button>
+                  </span>
+                </div>
+                
+              </form>
+              <!-- /.search form -->
+
+              <!-- Sidebar Menu -->
+              <ul class="sidebar-menu">
+              <!-- Sidebar toggle button-->
+                
+                <li class="header" ><span>WORKSPACE<a class="sidebar-toggle_bioverse" data-toggle="offcanvas" role="button" href="#"><i style="color:#F7DCB4;" class="fa fa-bars pull-right fa-lg"></i></a></span></li>
+                <!-- Optionally, you can add icons to the links -->
+                <li id="bioverse-menu-bars"><a class="sidebar-toggle_bioverse2" data-toggle="offcanvas" role="button" href="#"><i class="fa fa-bars fa-lg"></i></a></li>
+                
+                <li><a href="/bioverse/protein/"><i class="fa fa-cogs fa-lg"></i> <span>Design</span></a></li>
+                <li><a href="#"><i class="fa fa-database fa-lg"></i> <span>Explore</span></a></li>
+                <li class="treeview">
+                  <a href="#"><i class="fa fa-bar-chart fa-lg"></i> <span>Analyze</span> <i class="fa fa-angle-left pull-right"></i></a>
+                  <ul class="treeview-menu">
+                    <li><a href="#">Link in level 2</a></li>
+                    <li><a href="#">Link in level 2</a></li>
+                  </ul>
+                </li>
+              </ul><!-- /.sidebar-menu -->
+            </section>
+            <!-- /.sidebar -->
+          </aside>
+
+          <!-- Content Wrapper. Contains page content -->
+          <div class="content-wrapper">
+            <!-- Content Header (Page header) 
+            <section class="content-header">
+              
+            </section>-->
+
+            <!-- Main content -->
+            <section class="content">
+
+              {% block content %} {% endblock %}
+
+              <!-- Your Page Content Here -->
+
+            </section><!-- /.content -->
+          </div><!-- /.content-wrapper -->
+
+          <!-- Main Footer -->
+          {% block footer %} {%endblock %}
+
+          <footer class="main-footer">
+            <!-- Default to the left -->
+            <strong>Copyright &copy; 2015 <a href="#">The Bioverse Project</a>.</strong> All rights reserved.
+          </footer>
+
+        </div><!-- ./wrapper -->
+
+        <!-- AdminLTE App -->
+        <script src="/static/js/app.min.js"></script>
+
+      </body>
+
+
+      </div>
+
+
+    </body>
+</html>
