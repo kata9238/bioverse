@@ -30,6 +30,3 @@ config.py
 *.swp
 *.swo
 *~
-
-# ignore results directory
-results/*
