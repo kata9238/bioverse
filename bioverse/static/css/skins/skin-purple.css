@@ -3,7 +3,7 @@
  * ------------
  */
 .skin-purple .main-header .navbar {
-  background-color: #ecc78d;
+  background-color: #33575b;
 }
 .skin-purple .main-header .navbar .nav > li > a {
   color: #d0dfe4;
@@ -44,12 +44,12 @@
   }
 }
 .skin-purple .main-header .logo {
-  background-color: #e8bc77;
+  background-color: #33575b;
   color: #ffffff;
   border-bottom: 0 solid transparent;
 }
 .skin-purple .main-header .logo:hover {
-  background-color: #e5b261;
+  background-color: #33575b;
 }
 .skin-purple .main-header li.user-header {
   background-color: #ecc78d;
