@@ -3,7 +3,7 @@ from psycopg2.extras import DictCursor
 
 from config import config
 
-#from bioverse_beta.settings import DATABASES
+# from bioverse_beta.settings import DATABASES
 
 
 class SQLConnectionHandler(object):
