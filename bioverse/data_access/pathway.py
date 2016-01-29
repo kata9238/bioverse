@@ -5,11 +5,12 @@ from tornado.httpclient import HTTPClient, HTTPError
 from SOAPpy import SOAPProxy
 from indigo import Indigo
 
+
 # use tornado httpclient to get initial compound ids for smiles
 def get_compound_id(smiles):
     """ returns kegg id for compund with given smiles """
     indigo = Indigo()
-    #convert smiles to standard format
+    # convert smiles to standard format
     mol = indigo.loadMolecule(smiles)
     mol.aromatize()
     moi_smiles = mol.canonicalSmiles()
